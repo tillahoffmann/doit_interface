@@ -40,8 +40,10 @@ class SubprocessAction(BaseAction):
                 args.extend(file_dep)
                 continue
             if arg == "$<":
-                raise ValueError("first dependency substitution is not supported because doit uses "
-                                 "unordered sets for dependencies")
+                raise ValueError(
+                    "first dependency substitution is not supported because doit uses unordered "
+                    "sets for dependencies; see https://github.com/pydoit/doit/pull/430"
+                )
             elif arg == "$!":
                 arg = sys.executable
             elif arg == "$@":
