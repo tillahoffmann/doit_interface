@@ -1,3 +1,6 @@
+import doctest
+
+
 master_doc = "README"
 extensions = [
     "sphinx.ext.doctest",
@@ -11,6 +14,15 @@ plot_formats = [
     ("png", 144),
 ]
 html_theme = "nature"
+
+doctest_global_setup = """
+from doit_utilities import *
+manager = Manager.get_instance()
+"""
+doctest_global_cleanup = """
+manager.clear()
+"""
+doctest_default_flags = doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS
 
 # Configure autodoc to avoid excessively long fully-qualified names.
 add_module_names = False
