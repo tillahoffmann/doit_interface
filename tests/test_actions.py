@@ -4,7 +4,7 @@ from unittest import mock
 import sys
 
 
-def test_subprocess_env(manager: du.Manager):
+def test_subprocess_env(manager: du.Manager, tmpwd: str):
     manager(basename="inherit_env", actions=[du.SubprocessAction([])])
     manager(basename="update_env", actions=[du.SubprocessAction([], env={"OTHER_VAR": 17})])
     manager(basename="replace_env", actions=[
@@ -37,7 +37,7 @@ def test_subprocess_env(manager: du.Manager):
         os.environ.pop("DOIT_UTILITIES_TEST_VAR")
 
 
-def test_subprocess_global_env(manager: du.Manager):
+def test_subprocess_global_env(manager: du.Manager, tmpwd: str):
     manager(basename="task", actions=[du.SubprocessAction([])])
 
     with mock.patch("subprocess.check_call") as check_call:
