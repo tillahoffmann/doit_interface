@@ -1,4 +1,5 @@
 from doit_utilities import Manager
+from doit_utilities.util import NoTasksError
 import pytest
 from unittest import mock
 
@@ -66,7 +67,8 @@ def test_clear(manager: Manager):
 
 
 def test_no_tasks(manager: Manager):
-    assert manager.doit_main.run([])
+    with pytest.raises(NoTasksError):
+        list(manager._create_doit_tasks())
 
 
 def test_no_basename(manager: Manager):
