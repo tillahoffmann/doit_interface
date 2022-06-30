@@ -59,7 +59,7 @@ def test_missing_target_dir(manager: du.Manager, tmpwd: str):
 def test_path_prefix(manager: du.Manager, tmpwd: str):
     manager(basename="basename", name="input", targets=["inputs/input.txt"],
             actions=["echo hello > inputs/input.txt"])
-    with du.path_prefix(target_prefix="outputs", dependency_prefix="inputs"):
+    with du.path_prefix(targets="outputs", file_dep="inputs"):
         manager(basename="basename", name="output", targets=["output.txt"], file_dep=["input.txt"],
                 actions=["cp inputs/input.txt outputs/output.txt"])
 
@@ -78,12 +78,11 @@ def test_path_prefix_missing(manager: du.Manager):
 
 def test_path_prefix_conflict(manager: du.Manager):
     with pytest.raises(ValueError):
-        du.path_prefix("prefix", target_prefix="target_prefix")
+        du.path_prefix("prefix", targets="target_prefix")
     with pytest.raises(ValueError):
-        du.path_prefix("prefix", dependency_prefix="dependency_prefix")
+        du.path_prefix("prefix", file_dep="dependency_prefix")
     with pytest.raises(ValueError):
-        du.path_prefix("prefix", target_prefix="target_prefix",
-                       dependency_prefix="dependency_prefix")
+        du.path_prefix("prefix", targets="target_prefix", file_dep="dependency_prefix")
 
 
 def test_normalize_dependencies(manager: du.Manager):
@@ -102,3 +101,10 @@ def test_normalize_dependencies(manager: du.Manager):
     assert task2["file_dep"] == ["file1", "other"]
     assert task3["task_dep"] == ["task2"]
     assert task4["task_dep"] == ["task3:sub"]
+
+
+def test_prefix(manager: du.Manager):
+    with du.prefix(basename="prefix_", not_a_property=None):
+        task = manager(basename="value")
+        assert task["basename"] == "prefix_value"
+        assert "not_a_property" not in task

@@ -1,6 +1,8 @@
 from __future__ import annotations
 from doit.tools import create_folder
+import operator
 import os
+import typing
 from . import manager as manager_
 from .util import normalize_task_name, NoTasksError
 
@@ -105,40 +107,56 @@ class create_target_dirs(_BaseContext):
         return task
 
 
-class path_prefix(_BaseContext):
+class prefix(_BaseContext):
+    """
+    Add a prefix for specified task properties.
+
+    Args:
+        op: Operation used to join prefixes (defaults to addition).
+        **kwargs: Keyword arguments of different prefixes.
+    """
+    def __init__(self, *, manager: "manager_.Manager" = None, op: typing.Callable = None,
+                 **kwargs) -> None:
+        super().__init__(manager=manager)
+        self.kwargs = kwargs
+        self.op = op or operator.add
+
+    def __call__(self, task: dict) -> dict:
+        for key, prefix in self.kwargs.items():
+            if not (value := task.get(key)):
+                continue
+            if isinstance(value, str):
+                value = self.op(prefix, value)
+            elif isinstance(value, typing.Iterable):
+                value = [self.op(prefix, x) for x in value]
+            task[key] = value
+        return task
+
+
+class path_prefix(prefix):
     """
     Add a prefix for targets and/or file dependencies.
 
     Args:
-        prefix: Prefix for both targets and dependencies.
-        target_prefix: Prefix for targets.
-        dependency_prefix: Prefix for dependencies.
+        prefix: Prefix for both targets and file dependencies.
+        targets: Prefix for targets.
+        file_dep: Prefix for file dependencies.
 
     Example:
 
-        >>> with path_prefix(target_prefix="outputs", dependency_prefix="inputs"):
+        >>> with path_prefix(targets="outputs", file_dep="inputs"):
         ...     manager(basename="task", targets=["out.txt"], file_dep=["in.txt"])
         {'basename': 'task', 'targets': ['outputs/out.txt'], 'file_dep': ['inputs/in.txt'], ...}
     """
-    def __init__(self, prefix: str = None, *, target_prefix: str = None,
-                 dependency_prefix: str = None, manager: "manager_.Manager" = None):
-        super().__init__(manager=manager)
-        if not any([prefix, target_prefix, dependency_prefix]):
-            raise ValueError("at least one of `prefix`, `target_prefix`, or `dependency_prefix` "
-                             "must be given")
-        if prefix and any([target_prefix, dependency_prefix]):
-            raise ValueError("use either `prefix` or a combination of `target_prefix` and "
-                             "`dependency_prefix` but not both")
-        self.target_prefix = target_prefix or prefix
-        self.dependency_prefix = dependency_prefix or prefix
-
-    def __call__(self, task: dict) -> dict:
-        if self.target_prefix and (targets := task.get("targets")):
-            task["targets"] = [os.path.join(self.target_prefix, target) for target in targets]
-        if self.dependency_prefix and (dependencies := task.get("file_dep")):
-            task["file_dep"] = [os.path.join(self.dependency_prefix, dependency) for dependency
-                                in dependencies]
-        return task
+    def __init__(self, prefix: str = None, *, targets: str = None,
+                 file_dep: str = None, manager: "manager_.Manager" = None):
+        if not any([prefix, targets, file_dep]):
+            raise ValueError("at least one of `prefix`, `targets`, or `file_dep` must be given")
+        if prefix and any([targets, file_dep]):
+            raise ValueError("use either `prefix` or a combination of `targets` and `file_dep`, "
+                             "but not both")
+        super().__init__(manager=manager, file_dep=file_dep or prefix,
+                         targets=targets or prefix, op=os.path.join)
 
 
 class group_tasks(dict, _BaseContext):
