@@ -3,7 +3,7 @@ import re
 
 
 ref = os.environ.get("GITHUB_REF", "")
-match = re.match(r"^/refs/tag/([\d\.]+)$", ref)
+match = re.match(r"^/refs/tags/([\d\.]+)$", ref)
 if match:
     version = match.group(1)
     with open("VERSION", "w") as fp:
