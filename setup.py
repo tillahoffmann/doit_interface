@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 
 setup(
-    name="doit_utilities",
+    name="doit_interface",
     packages=find_packages(),
     version="0.1.0",
     install_requires=[

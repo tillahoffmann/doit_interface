@@ -1,27 +1,27 @@
 doit utilities
 ==============
 
-.. image:: https://github.com/tillahoffmann/doit_utilities/actions/workflows/main.yml/badge.svg
-  :target: https://github.com/tillahoffmann/doit_utilities/actions/workflows/main.yml
+.. image:: https://github.com/tillahoffmann/doit_interface/actions/workflows/main.yml/badge.svg
+  :target: https://github.com/tillahoffmann/doit_interface/actions/workflows/main.yml
 
-This package provides utilities for reducing boilerplate in :code:`dodo.py` of the `pydoit <https://pydoit.org>`__ build system. In short, all tasks are created and managed using a :class:`doit_utilities.Manager`. Most functionality is exposed using python context manager, e.g., grouping tasks.
+This package provides utilities for reducing boilerplate in :code:`dodo.py` of the `pydoit <https://pydoit.org>`__ build system. In short, all tasks are created and managed using a :class:`doit_interface.Manager`. Most functionality is exposed using python context manager, e.g., grouping tasks.
 
 Example
 -------
 
 .. doctest:: example
 
-  >>> import doit_utilities as du
+  >>> import doit_interface as di
 
 
-  >>> manager = du.Manager.get_instance()
+  >>> manager = di.Manager.get_instance()
 
   >>> # Create a single task.
   >>> manager(basename="create_foo", actions=["touch foo"], targets=["foo"])
   {'basename': 'create_foo', 'actions': ['touch foo'], 'targets': ['foo'], ...}
 
   >>> # Group multiple tasks.
-  >>> with du.group_tasks("my_group") as my_group:
+  >>> with di.group_tasks("my_group") as my_group:
   ...     manager(basename="member")
   {'basename': 'member', ...}
   >>> my_group
@@ -38,5 +38,5 @@ Example
 Interface
 ---------
 
-.. automodule:: doit_utilities
+.. automodule:: doit_interface
   :members:

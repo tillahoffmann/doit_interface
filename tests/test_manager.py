@@ -1,5 +1,5 @@
-from doit_utilities import Manager
-from doit_utilities.util import NoTasksError
+from doit_interface import Manager
+from doit_interface.util import NoTasksError
 import pytest
 from unittest import mock
 
