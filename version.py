@@ -5,5 +5,8 @@ import re
 ref = os.environ.get("GITHUB_REF", "")
 match = re.match(r"^/refs/tag/([\d\.]+)$", ref)
 if match:
+    version = match.group(1)
     with open("VERSION", "w") as fp:
-        fp.write(match.group(1))
+        fp.write(version)
+    print(f"wrote version {version} to VERSION file")
+print(f"cannot extract version from ref {ref}")
