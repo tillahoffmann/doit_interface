@@ -23,6 +23,7 @@ setup(
         ],
         "docs": [
             "sphinx",
+            "docutils<0.18",
         ]
     }
 )

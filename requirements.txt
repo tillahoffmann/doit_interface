@@ -34,14 +34,14 @@ coverage[toml]==6.4.1
     # via
     #   -r test_requirements.txt
     #   pytest-cov
-docutils==0.18.1
+docutils==0.17.1
     # via
     #   -r test_requirements.txt
     #   sphinx
 doit==0.36.0
     # via
     #   -r test_requirements.txt
-    #   doit-utilities
+    #   doit-interface
 flake8==4.0.1
     # via -r test_requirements.txt
 idna==3.3
