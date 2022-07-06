@@ -1,17 +1,17 @@
-import doit_utilities as du
-from doit_utilities.contexts import _BaseContext
+import doit_interface as di
+from doit_interface.contexts import _BaseContext
 import os
 import pytest
 
 
-def test_corrupt_context_stack(manager: du.Manager):
+def test_corrupt_context_stack(manager: di.Manager):
     with pytest.raises(RuntimeError), _BaseContext() as context:
         assert context in manager.context_stack
         manager.context_stack.append("some other context")
 
 
-def test_defaults(manager: du.Manager):
-    with du.defaults(property="value", basename="basename"):
+def test_defaults(manager: di.Manager):
+    with di.defaults(property="value", basename="basename"):
         task = manager(other=37)
         meta = task.pop("meta")
         assert task == {"basename": "basename", "property": "value", "other": 37}
@@ -19,13 +19,13 @@ def test_defaults(manager: du.Manager):
         assert "lineno" in meta
 
 
-def test_empty_group(manager: du.Manager):
-    with pytest.raises(du.NoTasksError), du.group_tasks("group_name"):
+def test_empty_group(manager: di.Manager):
+    with pytest.raises(di.NoTasksError), di.group_tasks("group_name"):
         pass
 
 
-def test_group(manager: du.Manager, tmpwd: str):
-    with du.group_tasks("group_name") as group:
+def test_group(manager: di.Manager, tmpwd: str):
+    with di.group_tasks("group_name") as group:
         manager(basename="basename1", actions=["touch file1"])
         manager(basename="basename2", actions=["touch file2"])
 
@@ -38,8 +38,8 @@ def test_group(manager: du.Manager, tmpwd: str):
     assert os.path.isfile("file2")
 
 
-def test_create_target_dirs(manager: du.Manager, tmpwd: str):
-    with du.create_target_dirs():
+def test_create_target_dirs(manager: di.Manager, tmpwd: str):
+    with di.create_target_dirs():
         task = manager(basename="basename", name="bar", targets=["foo/bar"],
                        actions=["touch foo/bar"])
     assert len(task["actions"]) == 2
@@ -49,17 +49,17 @@ def test_create_target_dirs(manager: du.Manager, tmpwd: str):
     assert os.path.isfile("foo/bar")
 
 
-def test_missing_target_dir(manager: du.Manager, tmpwd: str):
+def test_missing_target_dir(manager: di.Manager, tmpwd: str):
     manager(basename="basename", name="bar", targets=["foo/bar"], actions=["touch foo/bar"])
 
     assert manager.doit_main.run([])
     assert not os.path.isdir("foo")
 
 
-def test_path_prefix(manager: du.Manager, tmpwd: str):
+def test_path_prefix(manager: di.Manager, tmpwd: str):
     manager(basename="basename", name="input", targets=["inputs/input.txt"],
             actions=["echo hello > inputs/input.txt"])
-    with du.path_prefix(targets="outputs", file_dep="inputs"):
+    with di.path_prefix(targets="outputs", file_dep="inputs"):
         manager(basename="basename", name="output", targets=["output.txt"], file_dep=["input.txt"],
                 actions=["cp inputs/input.txt outputs/output.txt"])
 
@@ -71,22 +71,22 @@ def test_path_prefix(manager: du.Manager, tmpwd: str):
         assert fp.read().strip() == "hello"
 
 
-def test_path_prefix_missing(manager: du.Manager):
+def test_path_prefix_missing(manager: di.Manager):
     with pytest.raises(ValueError):
-        du.path_prefix()
+        di.path_prefix()
 
 
-def test_path_prefix_conflict(manager: du.Manager):
+def test_path_prefix_conflict(manager: di.Manager):
     with pytest.raises(ValueError):
-        du.path_prefix("prefix", targets="target_prefix")
+        di.path_prefix("prefix", targets="target_prefix")
     with pytest.raises(ValueError):
-        du.path_prefix("prefix", file_dep="dependency_prefix")
+        di.path_prefix("prefix", file_dep="dependency_prefix")
     with pytest.raises(ValueError):
-        du.path_prefix("prefix", targets="target_prefix", file_dep="dependency_prefix")
+        di.path_prefix("prefix", targets="target_prefix", file_dep="dependency_prefix")
 
 
-def test_normalize_dependencies(manager: du.Manager):
-    with du.normalize_dependencies():
+def test_normalize_dependencies(manager: di.Manager):
+    with di.normalize_dependencies():
         task1 = manager(basename="task1", targets=["file1"])
         task2 = manager(basename="task2", file_dep=[task1, "other"])
         task3 = manager(basename="task3", name="sub", task_dep=[task2])
@@ -103,8 +103,8 @@ def test_normalize_dependencies(manager: du.Manager):
     assert task4["task_dep"] == ["task3:sub"]
 
 
-def test_prefix(manager: du.Manager):
-    with du.prefix(basename="prefix_", not_a_property=None):
+def test_prefix(manager: di.Manager):
+    with di.prefix(basename="prefix_", not_a_property=None):
         task = manager(basename="value")
         assert task["basename"] == "prefix_value"
         assert "not_a_property" not in task

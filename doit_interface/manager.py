@@ -20,7 +20,7 @@ class Manager:
         >>> manager(basename="my_task", actions=[lambda: print("hello world")])
         {'basename': 'my_task', 'actions': [<function <lambda> at 0x...>], ...}
         >>> manager
-        <doit_utilities.manager.Manager object at 0x...> with 1 task
+        <doit_interface.manager.Manager object at 0x...> with 1 task
     """
     _DEFAULT_MANAGER: Manager = None
     _CURRENT_MANAGER: Manager = None
@@ -35,7 +35,7 @@ class Manager:
 
     def __call__(self, task=None, **kwargs: dict) -> dict:
         task = task or kwargs
-        for context in self.context_stack:
+        for context in reversed(self.context_stack):
             task = context(task)
             if task is None:
                 raise ValueError(f"{context} context did not return a task but `None`")

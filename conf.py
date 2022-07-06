@@ -8,7 +8,7 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.intersphinx",
 ]
-project = "doit_utilities"
+project = "doit_interface"
 napoleon_custom_sections = [("Returns", "params_style")]
 plot_formats = [
     ("png", 144),
@@ -16,7 +16,7 @@ plot_formats = [
 html_theme = "nature"
 
 doctest_global_setup = """
-from doit_utilities import *
+from doit_interface import *
 manager = Manager.get_instance()
 """
 doctest_global_cleanup = """

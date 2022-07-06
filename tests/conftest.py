@@ -1,4 +1,4 @@
-import doit_utilities as du
+import doit_interface as di
 import os
 import pytest
 import tempfile
@@ -6,7 +6,7 @@ import tempfile
 
 @pytest.fixture
 def manager():
-    with du.Manager() as manager:
+    with di.Manager() as manager:
         yield manager
 
 

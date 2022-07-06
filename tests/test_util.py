@@ -1,4 +1,4 @@
-import doit_utilities as du
+import doit_interface as di
 import pytest
 
 
@@ -8,4 +8,4 @@ import pytest
     ({"basename": "base", "name": "sub"}, "base:sub"),
 ])
 def test_normalize_task_name(task, expected):
-    assert du.util.normalize_task_name(task) == expected
+    assert di.util.normalize_task_name(task) == expected
