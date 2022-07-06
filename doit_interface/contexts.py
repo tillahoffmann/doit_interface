@@ -83,7 +83,9 @@ class defaults(_BaseContext):
         self.defaults = defaults
 
     def __call__(self, task: dict) -> dict:
-        return self.defaults | task
+        transformed = self.defaults.copy()
+        transformed.update(task)
+        return transformed
 
 
 class create_target_dirs(_BaseContext):

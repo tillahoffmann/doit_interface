@@ -28,7 +28,12 @@ class SubprocessAction(BaseAction):
         self.kwargs = kwargs
 
     def execute(self, out=None, err=None) -> None:
-        env = (os.environ if self.inherit_env else {}) | self._GLOBAL_ENV | self.env
+        if self.inherit_env:
+            env = dict(os.environ)
+        else:
+            env = {}
+        env.update(self._GLOBAL_ENV)
+        env.update(self.env)
         env = {key: str(value) for key, value in env.items() if value is not None}
 
         args = []
