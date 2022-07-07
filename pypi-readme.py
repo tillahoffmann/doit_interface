@@ -4,7 +4,7 @@ from readme_renderer import rst
 from unittest import mock
 
 
-def __main__(args: list[str] = None):
+def __main__(args: list = None):
     parser = argparse.ArgumentParser()
     parser.add_argument("output")
     args = parser.parse_args()
