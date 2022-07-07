@@ -32,11 +32,6 @@ Example
   >>> dict(my_group)
   {'basename': 'my_group', 'actions': [], 'task_dep': ['member'], ...}
 
-.. testcleanup:: example
-
-  # Need to manually clean up the instance because `doctest_global_cleanup` in `conf.py` doesn't.
-  manager.clear()
-
 Interface
 ---------
 

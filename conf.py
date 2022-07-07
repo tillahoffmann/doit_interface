@@ -17,10 +17,11 @@ html_theme = "nature"
 
 doctest_global_setup = """
 from doit_interface import *
-manager = Manager.get_instance()
+manager = Manager()
+manager.__enter__()
 """
 doctest_global_cleanup = """
-manager.clear()
+manager.__exit__()
 """
 doctest_default_flags = doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS
 
