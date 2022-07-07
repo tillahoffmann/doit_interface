@@ -18,6 +18,10 @@ babel==2.10.3
     # via
     #   -r test_requirements.txt
     #   sphinx
+bleach==5.0.1
+    # via
+    #   -r test_requirements.txt
+    #   readme-renderer
 certifi==2022.6.15
     # via
     #   -r test_requirements.txt
@@ -30,6 +34,10 @@ cloudpickle==2.1.0
     # via
     #   -r test_requirements.txt
     #   doit
+commonmark==0.9.1
+    # via
+    #   -r test_requirements.txt
+    #   rich
 coverage[toml]==6.4.1
     # via
     #   -r test_requirements.txt
@@ -37,6 +45,7 @@ coverage[toml]==6.4.1
 docutils==0.17.1
     # via
     #   -r test_requirements.txt
+    #   readme-renderer
     #   sphinx
 doit==0.36.0
     # via
@@ -56,6 +65,7 @@ importlib-metadata==4.12.0
     # via
     #   -r test_requirements.txt
     #   doit
+    #   twine
 iniconfig==1.1.1
     # via
     #   -r test_requirements.txt
@@ -64,6 +74,10 @@ jinja2==3.1.2
     # via
     #   -r test_requirements.txt
     #   sphinx
+keyring==23.6.0
+    # via
+    #   -r test_requirements.txt
+    #   twine
 markupsafe==2.1.1
     # via
     #   -r test_requirements.txt
@@ -77,6 +91,10 @@ packaging==21.3
     #   -r test_requirements.txt
     #   pytest
     #   sphinx
+pkginfo==1.8.3
+    # via
+    #   -r test_requirements.txt
+    #   twine
 pluggy==1.0.0
     # via
     #   -r test_requirements.txt
@@ -96,6 +114,8 @@ pyflakes==2.4.0
 pygments==2.12.0
     # via
     #   -r test_requirements.txt
+    #   readme-renderer
+    #   rich
     #   sphinx
 pyparsing==3.0.9
     # via
@@ -111,10 +131,32 @@ pytz==2022.1
     # via
     #   -r test_requirements.txt
     #   babel
+readme-renderer==35.0
+    # via
+    #   -r test_requirements.txt
+    #   twine
 requests==2.28.1
     # via
     #   -r test_requirements.txt
+    #   requests-toolbelt
     #   sphinx
+    #   twine
+requests-toolbelt==0.9.1
+    # via
+    #   -r test_requirements.txt
+    #   twine
+rfc3986==2.0.0
+    # via
+    #   -r test_requirements.txt
+    #   twine
+rich==12.4.4
+    # via
+    #   -r test_requirements.txt
+    #   twine
+six==1.16.0
+    # via
+    #   -r test_requirements.txt
+    #   bleach
 snowballstemmer==2.2.0
     # via
     #   -r test_requirements.txt
@@ -150,10 +192,17 @@ tomli==2.0.1
     #   -r test_requirements.txt
     #   coverage
     #   pytest
+twine==4.0.1
+    # via -r test_requirements.txt
 urllib3==1.26.9
     # via
     #   -r test_requirements.txt
     #   requests
+    #   twine
+webencodings==0.5.1
+    # via
+    #   -r test_requirements.txt
+    #   bleach
 zipp==3.8.0
     # via
     #   -r test_requirements.txt

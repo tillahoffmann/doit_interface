@@ -72,7 +72,8 @@ class Manager:
     @classmethod
     def get_instance(cls, strict: bool = False) -> Manager:
         """
-        Get the global default manager.
+        Get the currently active manager instance. If no manager is active, a global instance is
+        returned.
 
         Args:
             strict: Enforce that a specific manager is active rather than relying on a default.
