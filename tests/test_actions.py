@@ -1,7 +1,7 @@
 import doit_interface as di
 import os
-from unittest import mock
 import sys
+from unittest import mock
 
 
 def test_subprocess_env(manager: di.Manager, tmpwd: str):
@@ -107,3 +107,21 @@ def test_subprocess_substitutions(manager: di.Manager, tmpwd: str):
         # doit uses sets for file dependencies so the order is non-deterministic.
         assert set(args) == {"dep1", "dep2"}
         check_call.reset_mock()
+
+
+def test_subprocess_invalid_args(manager: di.Manager, tmpwd: str):
+    manager(basename="task", actions=[di.SubprocessAction(74)])
+    assert manager.doit_main.run([])
+
+
+def test_subprocess_shell(manager: di.Manager, tmpwd: str):
+    manager(basename="task", actions=[di.SubprocessAction("echo hello > world.txt")])
+    manager.doit_main.run([])
+    with open("world.txt") as fp:
+        assert fp.read().strip() == "hello"
+
+
+def test_subprocess_use_as_default(manager: di.Manager):
+    with di.SubprocessAction.use_as_default():
+        task = manager(basename="task", actions=["echo hello"])
+    assert isinstance(task["actions"][0], di.SubprocessAction)
