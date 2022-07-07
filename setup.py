@@ -13,7 +13,6 @@ with open("README.rst") as fp:
 substitutions = [
     (r":class:", r":code:"),
     (r".. doctest::.*", r".. code-block:: python"),
-    (r".. testcleanup::.*", r".. code-block:: python"),
     (r".. automodule::", r".. code-block::\n\n"),
 ]
 for pattern, repl in substitutions:

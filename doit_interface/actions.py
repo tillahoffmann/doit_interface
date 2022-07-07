@@ -4,6 +4,7 @@ import os
 import subprocess
 import sys
 import typing
+from .contexts import _BaseContext
 
 
 class SubprocessAction(BaseAction):
@@ -19,8 +20,8 @@ class SubprocessAction(BaseAction):
     """
     _GLOBAL_ENV = {}
 
-    def __init__(self, args: typing.Iterable[str], task: Task = None, env: dict = None,
-                 inherit_env: bool = True, **kwargs):
+    def __init__(self, args: typing.Union[str, typing.Iterable[str]], task: Task = None,
+                 env: dict = None, inherit_env: bool = True, **kwargs):
         self.args = args
         self.task = task
         self.env = env or {}
@@ -36,27 +37,36 @@ class SubprocessAction(BaseAction):
         env.update(self.env)
         env = {key: str(value) for key, value in env.items() if value is not None}
 
-        args = []
-        for arg in map(str, self.args):
-            # Apply string substitutions.
-            if arg == "$^":
-                if not (file_dep := self.task.file_dep):
-                    raise ValueError(f"task {self.task} does not have any file dependencies")
-                args.extend(file_dep)
-                continue
-            if arg == "$<":
-                raise ValueError(
-                    "first dependency substitution is not supported because doit uses unordered "
-                    "sets for dependencies; see https://github.com/pydoit/doit/pull/430"
-                )
-            elif arg == "$!":
-                arg = sys.executable
-            elif arg == "$@":
-                if not self.task.targets:
-                    raise ValueError(f"task {self.task} does not have any targets")
-                arg, *_ = self.task.targets
-            args.append(arg)
-        subprocess.check_call(args, env=env, **self.kwargs)
+        kwargs = dict(self.kwargs)
+        if isinstance(self.args, str):
+            kwargs.setdefault("shell", True)
+            args = self.args
+        elif isinstance(self.args, typing.Iterable):
+            kwargs.setdefault("shell", False)
+            args = []
+            for arg in map(str, self.args):
+                # Apply string substitutions.
+                if arg == "$^":
+                    if not (file_dep := self.task.file_dep):
+                        raise ValueError(f"task {self.task} does not have any file dependencies")
+                    args.extend(file_dep)
+                    continue
+                if arg == "$<":
+                    raise ValueError(
+                        "first dependency substitution is not supported because doit uses "
+                        "unordered sets for dependencies; see "
+                        "https://github.com/pydoit/doit/pull/430"
+                    )
+                elif arg == "$!":
+                    arg = sys.executable
+                elif arg == "$@":
+                    if not self.task.targets:
+                        raise ValueError(f"task {self.task} does not have any targets")
+                    arg, *_ = self.task.targets
+                args.append(arg)
+        else:
+            raise ValueError(self.args)
+        subprocess.check_call(args, env=env, **kwargs)
 
     @classmethod
     def set_global_env(cls, env):
@@ -79,3 +89,16 @@ class SubprocessAction(BaseAction):
     @property
     def values(self):
         return {}
+
+    class use_as_default(_BaseContext):
+        """
+        Use the :class:`SubprocessAction` as the default action for strings (with shell execution)
+        and lists of strings (without shell execution).
+        """
+        def __call__(self, task: dict) -> dict:
+            if actions := task.get("actions"):
+                task["actions"] = [
+                    SubprocessAction(action) if isinstance(action, (str, list)) else action
+                    for action in actions
+                ]
+            return task
