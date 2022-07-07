@@ -73,7 +73,7 @@ class Manager:
     def get_instance(cls, strict: bool = False) -> Manager:
         """
         Get the currently active manager instance. If no manager is active, a global instance is
-        returned.
+        returned that includes a number of default contexts.
 
         Args:
             strict: Enforce that a specific manager is active rather than relying on a default.
@@ -83,7 +83,13 @@ class Manager:
         elif strict:
             raise RuntimeError("no manager is active")
         if not cls._DEFAULT_MANAGER:
+            from .actions import SubprocessAction
             cls._DEFAULT_MANAGER = Manager()
+            cls._DEFAULT_MANAGER.context_stack.extend([
+                SubprocessAction.use_as_default(),
+                contexts.create_target_dirs(),
+                contexts.normalize_dependencies(),
+            ])
         return cls._DEFAULT_MANAGER
 
     def __repr__(self) -> str:
