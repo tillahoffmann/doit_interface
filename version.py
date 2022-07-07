@@ -15,7 +15,7 @@ def __main__():
         with open("VERSION", "w") as fp:
             fp.write(version)
         print(f"wrote version {version} to VERSION file")
-    elif re.match(r"^refs/heads/", ref):
+    elif re.match(r"^refs/(heads|pull)/", ref):
         print(f"ref {ref} is not a tag")
     else:
         raise ValueError(f"unexpected reference {ref}")
