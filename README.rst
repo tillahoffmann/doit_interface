@@ -5,6 +5,8 @@ doit interface
   :target: https://github.com/tillahoffmann/doit_interface/actions/workflows/main.yml
 .. image:: https://img.shields.io/pypi/v/doit_interface.svg?style=flat-square
    :target: https://pypi.python.org/pypi/doit_interface
+.. image:: https://readthedocs.org/projects/doit-interface/badge/?version=latest
+   :target: https://doit-interface.readthedocs.io/en/latest/?badge=latest
 
 This package provides a functional interface for reducing boilerplate in :code:`dodo.py` of the `pydoit <https://pydoit.org>`__ build system. In short, all tasks are created and managed using a :class:`doit_interface.Manager`. Most functionality is exposed using python context manager, e.g., grouping tasks.
 
