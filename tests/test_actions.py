@@ -1,5 +1,6 @@
 import doit_interface as di
 import os
+import pytest
 import sys
 from unittest import mock
 
@@ -64,7 +65,13 @@ def test_subprocess_global_env(manager: di.Manager, tmpwd: str):
         check_call.reset_mock()
 
 
-def test_subprocess_substitutions(manager: di.Manager, tmpwd: str):
+@pytest.mark.parametrize("shell", [True, False])
+def test_subprocess_substitutions(manager: di.Manager, tmpwd: str, shell: bool):
+    def _maybe_join(x):
+        if shell:
+            x = " ".join(x)
+        return x
+
     # Create dependency files so we can run doit.
     for filename in ["dep1", "dep2"]:
         with open(filename, "w") as fp:
@@ -77,9 +84,10 @@ def test_subprocess_substitutions(manager: di.Manager, tmpwd: str):
         ("target", ["$@"], {"targets": ["target1", "target2"]}),
         ("single_dep", ["$<"], {"file_dep": ["dep1", "dep2"]}),
         ("multiple_dep", ["$^"], {"file_dep": ["dep1", "dep2"]}),
+        ("name_sub", ["echo", "hello {name}"], {}),
     ]
     for basename, args, kwargs in tasks:
-        manager(basename=basename, actions=[di.SubprocessAction(args)], **kwargs)
+        manager(basename=basename, actions=[di.SubprocessAction(_maybe_join(args))], **kwargs)
 
     for task in ["no_target", "no_multiple_deps"]:
         assert manager.doit_main.run([task])
@@ -88,13 +96,13 @@ def test_subprocess_substitutions(manager: di.Manager, tmpwd: str):
         assert not manager.doit_main.run(["interpreter"])
         check_call.assert_called_once()
         (args, *_), _ = check_call.call_args
-        assert args == [sys.executable]
+        assert args == _maybe_join([sys.executable])
         check_call.reset_mock()
 
         assert not manager.doit_main.run(["target"])
         check_call.assert_called_once()
         (args, *_), _ = check_call.call_args
-        assert args == ["target1"]
+        assert args == _maybe_join(["target1"])
         check_call.reset_mock()
 
         assert manager.doit_main.run(["single_dep"])
@@ -105,7 +113,13 @@ def test_subprocess_substitutions(manager: di.Manager, tmpwd: str):
         check_call.assert_called_once()
         (args, *_), _ = check_call.call_args
         # doit uses sets for file dependencies so the order is non-deterministic.
-        assert set(args) == {"dep1", "dep2"}
+        assert set(args.split() if shell else args) == {"dep1", "dep2"}
+        check_call.reset_mock()
+
+        assert not manager.doit_main.run(["name_sub"])
+        check_call.assert_called_once()
+        (args, *_), _ = check_call.call_args
+        assert args == _maybe_join(["echo", "hello name_sub"])
         check_call.reset_mock()
 
 

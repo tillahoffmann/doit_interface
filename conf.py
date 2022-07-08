@@ -31,8 +31,5 @@ autodoc_typehints_format = "short"
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
-    "numpy": ("https://numpy.org/doc/stable/", None),
-    "scipy": ("https://docs.scipy.org/doc/scipy/", None),
-    "matplotlib": ("https://matplotlib.org/stable", None),
-    "torch": ("https://pytorch.org/docs/stable/", None),
+    "doit": ("https://pydoit.org", None),
 }
