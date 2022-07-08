@@ -40,5 +40,10 @@ setup(
             "sphinx",
             "docutils<0.18",
         ],
-    }
+    },
+    entry_points={
+        "doit.REPORTER": [
+            "doit_interface = doit_interface.reporters:DoitInterfaceReporter",
+        ],
+    },
 )
