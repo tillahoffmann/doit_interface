@@ -139,3 +139,8 @@ def test_subprocess_use_as_default(manager: di.Manager):
     with di.SubprocessAction.use_as_default():
         task = manager(basename="task", actions=["echo hello"])
     assert isinstance(task["actions"][0], di.SubprocessAction)
+
+
+def test_subprocess_fail(manager: di.Manager):
+    manager(basename="task", actions=[di.SubprocessAction("false")])
+    assert manager.doit_main.run([])
