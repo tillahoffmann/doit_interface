@@ -1,4 +1,5 @@
 from doit.action import BaseAction
+from doit.exceptions import TaskFailed
 from doit.task import Task
 import os
 import subprocess
@@ -99,7 +100,11 @@ class SubprocessAction(BaseAction):
                 args.append(arg)
         else:
             raise ValueError(self.args)
-        subprocess.check_call(args, env=env, **kwargs)
+
+        try:
+            subprocess.check_call(args, env=env, **kwargs)
+        except Exception as ex:
+            return TaskFailed(str(ex), exception=ex)
 
     @classmethod
     def set_global_env(cls, env):
@@ -122,6 +127,10 @@ class SubprocessAction(BaseAction):
     @property
     def values(self):
         return {}
+
+    @property
+    def out(self):
+        return None
 
     class use_as_default(_BaseContext):
         """
