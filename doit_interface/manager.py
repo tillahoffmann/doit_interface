@@ -72,8 +72,11 @@ class Manager:
     @classmethod
     def get_instance(cls, strict: bool = False) -> Manager:
         """
-        Get the currently active manager instance. If no manager is active, a global instance is
-        returned that includes a number of default contexts.
+        Get the currently active manager instance.
+
+        If no manager is active, a global instance is returned that includes a number of default
+        contexts. Should you require a manager without default contexts, create a new one and use
+        it with a :code:`with` statement.
 
         Args:
             strict: Enforce that a specific manager is active rather than relying on a default.
