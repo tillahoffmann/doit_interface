@@ -3,7 +3,7 @@ doit interface
 
 .. image:: https://github.com/tillahoffmann/doit_interface/actions/workflows/main.yml/badge.svg
   :target: https://github.com/tillahoffmann/doit_interface/actions/workflows/main.yml
-.. image:: https://img.shields.io/pypi/v/doit_interface.svg?style=flat-square
+.. image:: https://img.shields.io/pypi/v/doit_interface.svg?style=flat
    :target: https://pypi.python.org/pypi/doit_interface
 .. image:: https://readthedocs.org/projects/doit-interface/badge/?version=latest
    :target: https://doit-interface.readthedocs.io/en/latest/?badge=latest
