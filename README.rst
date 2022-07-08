@@ -29,7 +29,7 @@ Example
   ...     manager(basename="member")
   {'basename': 'member', ...}
   >>> my_group
-  group `my_group` with 1 task
+  <doit_interface.contexts.group_tasks object at 0x...> named `my_group` with 1 task
   >>> # Show the task we implicitly constructed using `group_tasks`.
   >>> dict(my_group)
   {'basename': 'my_group', 'actions': [], 'task_dep': ['member'], ...}

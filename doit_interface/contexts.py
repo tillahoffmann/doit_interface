@@ -179,7 +179,7 @@ class group_tasks(dict, _BaseContext):
         {'basename': 'my_first_task', ...}
         {'basename': 'my_second_task', ...}
         >>> group
-        group `my_group` with 2 tasks
+        <doit_interface.contexts.group_tasks object at 0x...> named `my_group` with 2 tasks
     """
     def __init__(self, basename: str, *, actions: list = None, task_dep: list = None,
                  manager: "manager_.Manager" = None, **kwargs) -> None:
@@ -201,5 +201,5 @@ class group_tasks(dict, _BaseContext):
 
     def __repr__(self) -> str:
         num_tasks = len(self['task_dep'])
-        return f"group `{normalize_task_name(self)}` with {num_tasks} " \
-            f"{'tasks' if num_tasks > 1 else 'task'}"
+        return f"{_BaseContext.__repr__(self)} named `{normalize_task_name(self)}` with " \
+            f"{num_tasks} {'tasks' if num_tasks > 1 else 'task'}"
