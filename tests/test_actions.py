@@ -5,7 +5,7 @@ import sys
 from unittest import mock
 
 
-def test_subprocess_env(manager: di.Manager, tmpwd: str):
+def test_subprocess_env(manager: di.Manager):
     manager(basename="inherit_env", actions=[di.SubprocessAction([])])
     manager(basename="update_env", actions=[di.SubprocessAction([], env={"OTHER_VAR": 17})])
     manager(basename="replace_env", actions=[
@@ -38,7 +38,7 @@ def test_subprocess_env(manager: di.Manager, tmpwd: str):
         os.environ.pop("doit_interface_TEST_VAR")
 
 
-def test_subprocess_global_env(manager: di.Manager, tmpwd: str):
+def test_subprocess_global_env(manager: di.Manager):
     manager(basename="task", actions=[di.SubprocessAction([])])
 
     with mock.patch("subprocess.check_call") as check_call:
@@ -66,7 +66,7 @@ def test_subprocess_global_env(manager: di.Manager, tmpwd: str):
 
 
 @pytest.mark.parametrize("shell", [True, False])
-def test_subprocess_substitutions(manager: di.Manager, tmpwd: str, shell: bool):
+def test_subprocess_substitutions(manager: di.Manager, shell: bool):
     def _maybe_join(x):
         if shell:
             x = " ".join(x)
@@ -123,12 +123,12 @@ def test_subprocess_substitutions(manager: di.Manager, tmpwd: str, shell: bool):
         check_call.reset_mock()
 
 
-def test_subprocess_invalid_args(manager: di.Manager, tmpwd: str):
+def test_subprocess_invalid_args(manager: di.Manager):
     manager(basename="task", actions=[di.SubprocessAction(74)])
     assert manager.doit_main.run([])
 
 
-def test_subprocess_shell(manager: di.Manager, tmpwd: str):
+def test_subprocess_shell(manager: di.Manager):
     manager(basename="task", actions=[di.SubprocessAction("echo hello > world.txt")])
     manager.doit_main.run([])
     with open("world.txt") as fp:
@@ -141,6 +141,6 @@ def test_subprocess_use_as_default(manager: di.Manager):
     assert isinstance(task["actions"][0], di.SubprocessAction)
 
 
-def test_subprocess_fail(manager: di.Manager, tmpwd: str):
+def test_subprocess_fail(manager: di.Manager):
     manager(basename="task", actions=[di.SubprocessAction("false")])
     assert manager.doit_main.run([])

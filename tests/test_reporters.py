@@ -3,7 +3,7 @@ import pytest
 
 
 @pytest.mark.parametrize("with_meta", [True, False])
-def test_reporter(manager: di.Manager, with_meta: bool, tmpwd: str):
+def test_reporter(manager: di.Manager, with_meta: bool):
     task = manager(basename="false", actions=["false"])
     if not with_meta:
         task.pop("meta")
