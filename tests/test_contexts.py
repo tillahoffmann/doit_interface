@@ -24,7 +24,7 @@ def test_empty_group(manager: di.Manager):
         pass
 
 
-def test_group(manager: di.Manager, tmpwd: str):
+def test_group(manager: di.Manager):
     with di.group_tasks("group_name") as group:
         manager(basename="basename1", actions=["touch file1"])
         manager(basename="basename2", actions=["touch file2"])
@@ -38,7 +38,7 @@ def test_group(manager: di.Manager, tmpwd: str):
     assert os.path.isfile("file2")
 
 
-def test_create_target_dirs(manager: di.Manager, tmpwd: str):
+def test_create_target_dirs(manager: di.Manager):
     with di.create_target_dirs():
         task = manager(basename="basename", name="bar", targets=["foo/bar"],
                        actions=["touch foo/bar"])
@@ -49,14 +49,14 @@ def test_create_target_dirs(manager: di.Manager, tmpwd: str):
     assert os.path.isfile("foo/bar")
 
 
-def test_missing_target_dir(manager: di.Manager, tmpwd: str):
+def test_missing_target_dir(manager: di.Manager):
     manager(basename="basename", name="bar", targets=["foo/bar"], actions=["touch foo/bar"])
 
     assert manager.doit_main.run([])
     assert not os.path.isdir("foo")
 
 
-def test_path_prefix(manager: di.Manager, tmpwd: str):
+def test_path_prefix(manager: di.Manager):
     manager(basename="basename", name="input", targets=["inputs/input.txt"],
             actions=["echo hello > inputs/input.txt"])
     with di.path_prefix(targets="outputs", file_dep="inputs"):

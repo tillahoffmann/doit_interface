@@ -10,7 +10,7 @@ def manager():
         yield manager
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True)
 def tmpwd():
     with tempfile.TemporaryDirectory() as tmp:
         cwd = os.getcwd()
