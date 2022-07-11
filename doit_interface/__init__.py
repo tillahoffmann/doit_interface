@@ -1,4 +1,5 @@
 from .actions import SubprocessAction
+from .config import DOIT_CONFIG
 from .contexts import create_target_dirs, defaults, group_tasks, normalize_dependencies, \
     path_prefix, prefix
 from .manager import Manager
@@ -17,4 +18,5 @@ __all__ = [
     "prefix",
     "SubprocessAction",
     "DoitInterfaceReporter",
+    "DOIT_CONFIG",
 ]
