@@ -2,6 +2,9 @@ from doit.reporter import ConsoleReporter
 
 
 class DoitInterfaceReporter(ConsoleReporter):
+    """
+    Doit console reporter that includes a traceback for failed tasks.
+    """
     def _write_failure(self, result: dict, write_exception=True):
         task = result["task"]
         parts = [

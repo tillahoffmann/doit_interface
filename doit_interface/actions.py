@@ -108,15 +108,15 @@ class SubprocessAction(BaseAction):
 
     @classmethod
     def set_global_env(cls, env):
-        """
-        Set global environment variables for all :class:`SubprocessAction` s.
+        r"""
+        Set global environment variables for all :class:`SubprocessAction`\s.
         """
         cls._GLOBAL_ENV = env
 
     @classmethod
     def get_global_env(cls):
-        """
-        Get global environment variables for all :class:`SubprocessAction` s.
+        r"""
+        Get global environment variables for all :class:`SubprocessAction`\s.
         """
         return cls._GLOBAL_ENV
 
