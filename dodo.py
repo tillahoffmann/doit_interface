@@ -1,6 +1,7 @@
 import doit_interface as di
 
 
+DOIT_CONFIG = di.DOIT_CONFIG
 manager = di.Manager.get_instance()
 
 with di.group_tasks("build"):
