@@ -90,7 +90,7 @@ def test_subprocess_substitutions(manager: di.Manager, shell: bool):
         manager(basename=basename, actions=[di.SubprocessAction(_maybe_join(args))], **kwargs)
 
     for task in ["no_target", "no_multiple_deps"]:
-        assert manager.doit_main.run([task])
+        assert manager.doit_main.run([task]) == 3
 
     with mock.patch("subprocess.check_call") as check_call:
         assert not manager.doit_main.run(["interpreter"])
@@ -105,7 +105,7 @@ def test_subprocess_substitutions(manager: di.Manager, shell: bool):
         assert args == _maybe_join(["target1"])
         check_call.reset_mock()
 
-        assert manager.doit_main.run(["single_dep"])
+        assert manager.doit_main.run(["single_dep"]) == 3
         check_call.assert_not_called()
         check_call.reset_mock()
 
@@ -125,7 +125,7 @@ def test_subprocess_substitutions(manager: di.Manager, shell: bool):
 
 def test_subprocess_invalid_args(manager: di.Manager):
     manager(basename="task", actions=[di.SubprocessAction(74)])
-    assert manager.doit_main.run([])
+    assert manager.doit_main.run([]) == 3
 
 
 def test_subprocess_shell(manager: di.Manager):
@@ -143,4 +143,4 @@ def test_subprocess_use_as_default(manager: di.Manager):
 
 def test_subprocess_fail(manager: di.Manager):
     manager(basename="task", actions=[di.SubprocessAction("false")])
-    assert manager.doit_main.run([])
+    assert manager.doit_main.run([]) == 1

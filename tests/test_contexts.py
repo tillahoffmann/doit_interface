@@ -52,7 +52,7 @@ def test_create_target_dirs(manager: di.Manager):
 def test_missing_target_dir(manager: di.Manager):
     manager(basename="basename", name="bar", targets=["foo/bar"], actions=["touch foo/bar"])
 
-    assert manager.doit_main.run([])
+    assert manager.doit_main.run([]) == 1
     assert not os.path.isdir("foo")
 
 
