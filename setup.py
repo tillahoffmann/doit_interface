@@ -25,6 +25,7 @@ setup(
     packages=find_packages(),
     version=VERSION,
     install_requires=[
+        "colorama",
         "doit",
     ],
     url="https://github.com/tillahoffmann/doit_interface",
