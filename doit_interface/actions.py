@@ -51,6 +51,8 @@ class SubprocessAction(BaseAction):
         self.env = env or {}
         self.inherit_env = inherit_env
         self.kwargs = kwargs
+        self.err = self.out = self.result = None
+        self.values = {}
 
     def _format_arg(self, arg: str, variables: dict):
         arg = arg.format(**variables)
@@ -119,18 +121,6 @@ class SubprocessAction(BaseAction):
         Get global environment variables for all :class:`SubprocessAction`\s.
         """
         return cls._GLOBAL_ENV
-
-    @property
-    def result(self):
-        return None
-
-    @property
-    def values(self):
-        return {}
-
-    @property
-    def out(self):
-        return None
 
     class use_as_default(_BaseContext):
         """
