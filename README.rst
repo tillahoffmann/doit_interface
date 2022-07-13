@@ -1,5 +1,5 @@
-doit interface
-==============
+🎯 doit interface
+=================
 
 .. image:: https://github.com/tillahoffmann/doit_interface/actions/workflows/main.yml/badge.svg
   :target: https://github.com/tillahoffmann/doit_interface/actions/workflows/main.yml

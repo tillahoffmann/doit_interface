@@ -51,6 +51,7 @@ docutils==0.17.1
     #   -r test_requirements.txt
     #   readme-renderer
     #   sphinx
+    #   sphinx-rtd-theme
 doit==0.36.0
     # via
     #   -r test_requirements.txt
@@ -166,6 +167,10 @@ snowballstemmer==2.2.0
     #   -r test_requirements.txt
     #   sphinx
 sphinx==5.0.2
+    # via
+    #   -r test_requirements.txt
+    #   sphinx-rtd-theme
+sphinx-rtd-theme==1.0.0
     # via -r test_requirements.txt
 sphinxcontrib-applehelp==1.0.2
     # via

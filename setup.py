@@ -40,6 +40,7 @@ setup(
         ],
         "docs": [
             "sphinx",
+            "sphinx_rtd_theme",
             "docutils<0.18",
         ],
     },

@@ -31,6 +31,7 @@ docutils==0.17.1
     #   doit-interface
     #   readme-renderer
     #   sphinx
+    #   sphinx-rtd-theme
 doit==0.36.0
     # via doit-interface
 flake8==4.0.1
@@ -100,6 +101,10 @@ six==1.16.0
 snowballstemmer==2.2.0
     # via sphinx
 sphinx==5.0.2
+    # via
+    #   doit-interface
+    #   sphinx-rtd-theme
+sphinx-rtd-theme==1.0.0
     # via doit-interface
 sphinxcontrib-applehelp==1.0.2
     # via sphinx

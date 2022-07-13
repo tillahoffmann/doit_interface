@@ -7,13 +7,14 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.autodoc",
     "sphinx.ext.intersphinx",
+    "sphinx_rtd_theme",
 ]
-project = "doit_interface"
+project = "🎯 doit interface"
 napoleon_custom_sections = [("Returns", "params_style")]
 plot_formats = [
     ("png", 144),
 ]
-html_theme = "nature"
+html_theme = "sphinx_rtd_theme"
 
 doctest_global_setup = """
 from doit_interface import *
