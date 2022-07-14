@@ -29,3 +29,29 @@ class NoTasksError(Exception):
     """
     No tasks have been discovered.
     """
+
+
+def dict2args(*args, **kwargs):
+    """
+    Convert a dictionary of values to named command line arguments.
+
+    Args:
+        *args: Sequence of mappings to convert.
+        **kwargs: Keyword arguments to convert.
+
+    Returns:
+        args: Sequence of named command line arguments.
+
+    Example:
+
+        >>> dict2args({"hello": "world"}, foo="bar")
+        ['--hello=world', '--foo=bar']
+    """
+    result = {}
+    values = list(args) + [kwargs]
+    for kwargs in values:
+        for key, value in kwargs.items():
+            if key in result:
+                raise ValueError(f"key {key} is supplied twice")
+            result[key] = value
+    return [f"--{key}={value}" for key, value in result.items()]
