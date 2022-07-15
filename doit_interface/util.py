@@ -20,7 +20,9 @@ def normalize_task_name(task: typing.Union[dict, str]) -> str:
     """
     if isinstance(task, str):
         return task
-    if (name := task.get("name")):
+    if not isinstance(task, dict):
+        raise TypeError(f"{task} of type {type(task)} is not a valid task or task name")
+    if name := task.get("name"):
         return f"{task['basename']}:{name}"
     return task["basename"]
 

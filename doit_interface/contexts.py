@@ -2,6 +2,7 @@ from __future__ import annotations
 from doit.tools import create_folder
 import operator
 import os
+import pathlib
 import typing
 from . import manager as manager_
 from .util import normalize_task_name, NoTasksError
@@ -48,7 +49,7 @@ class normalize_dependencies(_BaseContext):
         if file_dep := task.get("file_dep"):
             transformed = []
             for dep in file_dep:
-                if isinstance(dep, str):
+                if isinstance(dep, (str, pathlib.Path)):
                     transformed.append(dep)
                 elif isinstance(dep, dict):
                     if targets := dep.get("targets"):
@@ -57,7 +58,7 @@ class normalize_dependencies(_BaseContext):
                         raise ValueError(f"task {normalize_task_name(dep)} does not declare any "
                                          "targets")
                 else:
-                    raise TypeError(dep)
+                    raise TypeError(f"{dep} of type {type(dep)} is not a valid file_dep")
             task["file_dep"] = transformed
         return task
 

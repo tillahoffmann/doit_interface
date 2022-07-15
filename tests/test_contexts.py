@@ -1,6 +1,7 @@
 import doit_interface as di
 from doit_interface.contexts import _BaseContext
 import os
+import pathlib
 import pytest
 
 
@@ -91,6 +92,7 @@ def test_normalize_dependencies(manager: di.Manager):
         task2 = manager(basename="task2", file_dep=[task1, "other"])
         task3 = manager(basename="task3", name="sub", task_dep=[task2])
         task4 = manager(basename="task4", task_dep=[task3])
+        task5 = manager(basename="task5", file_dep=[pathlib.Path("file5")])
 
         with pytest.raises(ValueError, match="does not declare any targets"):
             manager(file_dep=[task2])
@@ -98,9 +100,13 @@ def test_normalize_dependencies(manager: di.Manager):
         with pytest.raises(TypeError):
             manager(file_dep=[None])
 
+        with pytest.raises(TypeError):
+            manager(task_dep=[pathlib.Path("file6")])
+
     assert task2["file_dep"] == ["file1", "other"]
     assert task3["task_dep"] == ["task2"]
     assert task4["task_dep"] == ["task3:sub"]
+    assert task5["file_dep"] == [pathlib.Path("file5")]
 
 
 def test_prefix(manager: di.Manager):
