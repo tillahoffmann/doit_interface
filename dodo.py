@@ -13,8 +13,8 @@ with di.group_tasks("build"):
         manager(name="html", actions=["sphinx-build . docs/_build"])
         manager(name="tests", actions=["sphinx-build -b doctest . docs/_build"])
 
-    manager(basename="version", actions=["$! version.py"], file_dep=["version.py"],
-            targets=["VERSION"])
+    manager(basename="version", file_dep=["version.py"], targets=["VERSION"],
+            actions=[di.SubprocessAction("$! version.py", check_targets=False)])
 
     with di.defaults(basename="package"):
         try:

@@ -92,7 +92,8 @@ def test_subprocess_substitutions(manager: di.Manager, shell: bool):
     for task in ["no_target", "no_multiple_deps"]:
         assert manager.doit_main.run([task]) == 3
 
-    with mock.patch("subprocess.check_call") as check_call:
+    with mock.patch("subprocess.check_call") as check_call, \
+            mock.patch("os.path.isfile", return_value=True) as isfile:
         assert not manager.doit_main.run(["interpreter"])
         check_call.assert_called_once()
         (args, *_), _ = check_call.call_args
@@ -104,6 +105,8 @@ def test_subprocess_substitutions(manager: di.Manager, shell: bool):
         (args, *_), _ = check_call.call_args
         assert args == _maybe_join(["target1"])
         check_call.reset_mock()
+        assert {call_args[0] for call_args, _ in isfile.call_args_list} == {"target1", "target2"}
+        isfile.reset_mock()
 
         assert manager.doit_main.run(["single_dep"]) == 3
         check_call.assert_not_called()
@@ -144,3 +147,13 @@ def test_subprocess_use_as_default(manager: di.Manager):
 def test_subprocess_fail(manager: di.Manager):
     manager(basename="task", actions=[di.SubprocessAction("false")])
     assert manager.doit_main.run([]) == 1
+
+
+@pytest.mark.parametrize("create_target", [True, False])
+@pytest.mark.parametrize("check_targets", [True, False])
+def test_target_not_created(manager: di.Manager, check_targets: bool, create_target: bool):
+    action = di.SubprocessAction("touch target" if create_target else "true",
+                                 check_targets=check_targets)
+    manager(basename="task", actions=[action], targets=["target"])
+    expected = 3 if not create_target and check_targets else 0
+    assert manager.doit_main.run([]) == expected
