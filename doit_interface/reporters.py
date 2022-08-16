@@ -17,9 +17,9 @@ class DoitInterfaceReporter(ConsoleReporter):
             meta = task.meta or {}
             filename = meta["filename"]
             lineno = meta["lineno"]
-            parts.append(f"(defined at {filename}:{lineno})")
+            parts.append(f"(declared at {filename}:{lineno})")
         except (AttributeError, KeyError):
-            parts.append("(defined at <unknown>)")
+            parts.append("(declared at <unknown>)")
 
         msg = " ".join(parts) + "\n"
         self.write(msg)

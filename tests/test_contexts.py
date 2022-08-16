@@ -3,6 +3,8 @@ from doit_interface.contexts import _BaseContext
 import os
 import pathlib
 import pytest
+from unittest import mock
+from .conftest import get_mocked_stdout
 
 
 def test_corrupt_context_stack(manager: di.Manager):
@@ -53,7 +55,9 @@ def test_create_target_dirs(manager: di.Manager):
 def test_missing_target_dir(manager: di.Manager):
     manager(basename="basename", name="bar", targets=["foo/bar"], actions=["touch foo/bar"])
 
-    assert manager.doit_main.run([]) == 1
+    with mock.patch("sys.stderr.write") as write:
+        assert manager.doit_main.run([]) == 1
+    assert "No such file or directory" in get_mocked_stdout(write)
     assert not os.path.isdir("foo")
 
 
