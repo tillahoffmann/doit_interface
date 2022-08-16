@@ -30,6 +30,7 @@ class SubprocessAction(BaseAction):
         env: Environment variables.
         inherit_env: Inherit the environment from the parent process. The environment is updated
             with `env` if `True` and replaced by `env` if `False`.
+        check_targets: Check that targets are created.
         **kwargs: Keyword arguments passed to :func:`subprocess.check_call`.
 
     Example:
@@ -45,11 +46,12 @@ class SubprocessAction(BaseAction):
     _GLOBAL_ENV = {}
 
     def __init__(self, args: typing.Union[str, typing.Iterable[str]], task: Task = None,
-                 env: dict = None, inherit_env: bool = True, **kwargs):
+                 env: dict = None, inherit_env: bool = True, check_targets: bool = True, **kwargs):
         self.args = args
         self.task = task
         self.env = env or {}
         self.inherit_env = inherit_env
+        self.check_targets = check_targets
         self.kwargs = kwargs
         self.err = self.out = self.result = None
         self.values = {}
@@ -107,6 +109,11 @@ class SubprocessAction(BaseAction):
             subprocess.check_call(args, env=env, **kwargs)
         except Exception as ex:
             return TaskFailed(str(ex), exception=ex)
+
+        if self.check_targets:
+            for target in self.task.targets:
+                if not os.path.isfile(target):
+                    raise RuntimeError(f"target {target} was not created")
 
     @classmethod
     def set_global_env(cls, env):
