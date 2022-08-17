@@ -3,6 +3,7 @@ import os
 import pytest
 import sys
 from unittest import mock
+from .conftest import get_mocked_stdout
 
 
 def test_subprocess_env(manager: di.Manager):
@@ -14,21 +15,21 @@ def test_subprocess_env(manager: di.Manager):
     try:
         os.environ["doit_interface_TEST_VAR"] = "VALUE"
         with mock.patch("subprocess.check_call") as check_call:
-            manager.doit_main.run(["inherit_env"])
+            assert not manager.doit_main.run(["inherit_env"])
             check_call.assert_called_once()
             _, kwargs = check_call.call_args
             assert kwargs["env"]["doit_interface_TEST_VAR"] == "VALUE"
             assert "OTHER_VAR" not in kwargs["env"]
             check_call.reset_mock()
 
-            manager.doit_main.run(["update_env"])
+            assert not manager.doit_main.run(["update_env"])
             check_call.assert_called_once()
             _, kwargs = check_call.call_args
             assert kwargs["env"]["doit_interface_TEST_VAR"] == "VALUE"
             assert kwargs["env"]["OTHER_VAR"] == "17"
             check_call.reset_mock()
 
-            manager.doit_main.run(["replace_env"])
+            assert not manager.doit_main.run(["replace_env"])
             check_call.assert_called_once()
             _, kwargs = check_call.call_args
             assert "doit_interface_TEST_VAR" not in kwargs["env"]
@@ -48,7 +49,7 @@ def test_subprocess_global_env(manager: di.Manager):
             di.SubprocessAction.get_global_env().update({
                 "doit_interface_OTHER_TEST_VAR": "SOMETHING_ELSE"})
 
-            manager.doit_main.run(["task"])
+            assert not manager.doit_main.run(["task"])
             check_call.assert_called_once()
             _, kwargs = check_call.call_args
             assert kwargs["env"]["doit_interface_TEST_VAR"] == "SOMETHING"
@@ -57,7 +58,7 @@ def test_subprocess_global_env(manager: di.Manager):
         finally:
             di.SubprocessAction.set_global_env({})
 
-        manager.doit_main.run(["task"])
+        assert not manager.doit_main.run(["task"])
         check_call.assert_called_once()
         _, kwargs = check_call.call_args
         assert "doit_interface_TEST_VAR" not in kwargs["env"]
@@ -108,7 +109,9 @@ def test_subprocess_substitutions(manager: di.Manager, shell: bool):
         assert {call_args[0] for call_args, _ in isfile.call_args_list} == {"target1", "target2"}
         isfile.reset_mock()
 
-        assert manager.doit_main.run(["single_dep"]) == 3
+        with mock.patch("sys.stderr.write") as write:
+            assert manager.doit_main.run(["single_dep"]) == 3
+        assert "first dependency substitution is not supported" in get_mocked_stdout(write)
         check_call.assert_not_called()
         check_call.reset_mock()
 
@@ -128,12 +131,14 @@ def test_subprocess_substitutions(manager: di.Manager, shell: bool):
 
 def test_subprocess_invalid_args(manager: di.Manager):
     manager(basename="task", actions=[di.SubprocessAction(74)])
-    assert manager.doit_main.run([]) == 3
+    with mock.patch("sys.stderr.write") as write:
+        assert manager.doit_main.run([]) == 3
+    assert "74 is not a valid command" in get_mocked_stdout(write)
 
 
 def test_subprocess_shell(manager: di.Manager):
     manager(basename="task", actions=[di.SubprocessAction("echo hello > world.txt")])
-    manager.doit_main.run([])
+    assert not manager.doit_main.run([])
     with open("world.txt") as fp:
         assert fp.read().strip() == "hello"
 

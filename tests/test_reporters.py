@@ -1,14 +1,8 @@
-import colorama
 import doit_interface as di
 import pytest
 import re
 from unittest import mock
-
-
-def _get_text(write: mock.MagicMock):
-    write.assert_called()
-    text = "".join(arg for (arg,), _ in write.call_args_list)
-    return re.sub(colorama.AnsiToWin32.ANSI_CSI_RE, "", text)
+from .conftest import get_mocked_stdout
 
 
 @pytest.mark.parametrize("with_meta", [True, False])
@@ -20,7 +14,12 @@ def test_reporter_traceback(manager: di.Manager, with_meta: bool):
     doit_main.task_loader.namespace["DOIT_CONFIG"] = {
         "reporter": di.DoitInterfaceReporter,
     }
-    assert doit_main.run(["false"])
+    with mock.patch("sys.stdout.write") as write:
+        assert doit_main.run(["false"])
+    if with_meta:
+        assert re.search(r"false \(declared at .*?test_reporters.py:10\)", get_mocked_stdout(write))
+    else:
+        assert re.search(r"false \(declared at <unknown>\)", get_mocked_stdout(write))
 
 
 def test_reporter_labels(manager: di.Manager):
@@ -34,23 +33,23 @@ def test_reporter_labels(manager: di.Manager):
     }
 
     with mock.patch("sys.stdout.write") as write:
-        doit_main.run(["success"])
-        stdout = _get_text(write)
+        assert not doit_main.run(["success"])
+        stdout = get_mocked_stdout(write)
     assert "EXECUTE: success" in stdout
     assert "SUCCESS: success" in stdout
 
     with mock.patch("sys.stdout.write") as write:
-        doit_main.run(["failed"])
-        stdout = _get_text(write)
+        assert doit_main.run(["failed"])
+        stdout = get_mocked_stdout(write)
     assert "EXECUTE: failed" in stdout
     assert "FAILED: failed" in stdout
 
     with mock.patch("sys.stdout.write") as write:
-        doit_main.run(["uptodate"])
-        stdout = _get_text(write)
+        assert not doit_main.run(["uptodate"])
+        stdout = get_mocked_stdout(write)
     assert "EXECUTE: uptodate" in stdout
     assert "SUCCESS: uptodate" in stdout
     with mock.patch("sys.stdout.write") as write:
-        doit_main.run(["uptodate"])
-        stdout = _get_text(write)
+        assert not doit_main.run(["uptodate"])
+        stdout = get_mocked_stdout(write)
     assert "UP TO DATE: uptodate" in stdout

@@ -103,7 +103,7 @@ class SubprocessAction(BaseAction):
                     continue
                 args.append(arg)
         else:
-            raise ValueError(self.args)
+            raise ValueError(f"{self.args} is not a valid command")
 
         try:
             subprocess.check_call(args, env=env, **kwargs)
