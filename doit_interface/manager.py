@@ -76,7 +76,7 @@ class Manager:
 
         If no manager is active, a global instance is returned that includes a number of default
         contexts. Should you require a manager without default contexts, create a new one and use
-        it with a :code:`with` statement.
+        it with a :code:`with` statement or call :meth:`set_default_instance`.
 
         Args:
             strict: Enforce that a specific manager is active rather than relying on a default.
@@ -93,6 +93,20 @@ class Manager:
                 contexts.create_target_dirs(),
                 contexts.normalize_dependencies(),
             ])
+        return cls._DEFAULT_MANAGER
+
+    @classmethod
+    def set_default_instance(cls, instance: Manager) -> Manager:
+        """
+        Set the default manager.
+
+        Args:
+            instance: Instance to use by default.
+
+        Returns:
+            instance: Input argument.
+        """
+        cls._DEFAULT_MANAGER = instance
         return cls._DEFAULT_MANAGER
 
     def __repr__(self) -> str:

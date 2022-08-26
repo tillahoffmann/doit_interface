@@ -20,6 +20,13 @@ def test_get_manager():
     assert Manager._CURRENT_MANAGER is None
 
 
+def test_set_default_instance():
+    instance = Manager()
+    assert Manager.get_instance() is not instance
+    assert Manager.set_default_instance(instance) is instance
+    assert Manager.get_instance() is instance
+
+
 def test_get_missing_manager_strict():
     with pytest.raises(RuntimeError):
         Manager.get_instance(strict=True)
