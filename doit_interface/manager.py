@@ -13,6 +13,9 @@ class Manager:
     Args:
         context_stack: Stack of context managers that will be applied to all associated tasks.
 
+    Attributes:
+        context_stack: Stack of context managers that will be applied to all associated tasks.
+
     Example:
         Get the default manager and create a single task.
 
