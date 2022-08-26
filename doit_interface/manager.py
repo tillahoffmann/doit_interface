@@ -13,6 +13,9 @@ class Manager:
     Args:
         context_stack: Stack of context managers that will be applied to all associated tasks.
 
+    Attributes:
+        context_stack: Stack of context managers that will be applied to all associated tasks.
+
     Example:
         Get the default manager and create a single task.
 
@@ -76,7 +79,7 @@ class Manager:
 
         If no manager is active, a global instance is returned that includes a number of default
         contexts. Should you require a manager without default contexts, create a new one and use
-        it with a :code:`with` statement.
+        it with a :code:`with` statement or call :meth:`set_default_instance`.
 
         Args:
             strict: Enforce that a specific manager is active rather than relying on a default.
@@ -95,6 +98,20 @@ class Manager:
             ])
         return cls._DEFAULT_MANAGER
 
+    @classmethod
+    def set_default_instance(cls, instance: Manager) -> Manager:
+        """
+        Set the default manager.
+
+        Args:
+            instance: Instance to use by default.
+
+        Returns:
+            instance: Input argument.
+        """
+        cls._DEFAULT_MANAGER = instance
+        return cls._DEFAULT_MANAGER
+
     def __repr__(self) -> str:
         return f"{super().__repr__()} with {len(self.tasks)} " \
             f"{'tasks' if len(self.tasks) > 1 else 'task'}"
@@ -106,11 +123,23 @@ class Manager:
         self.tasks.clear()
         self.context_stack.clear()
 
-    @property
-    def doit_main(self) -> DoitMain:
+    def doit_main(self, DOIT_CONFIG=None, **kwargs) -> DoitMain:
         """
         Doit interface object.
         """
         loader = NamespaceTaskLoader()
-        loader.namespace = {"manager": self}
+        loader.namespace = {"manager": self, "DOIT_CONFIG": DOIT_CONFIG or {}, **kwargs}
         return DoitMain(loader)
+
+    def run(self, args: list[str] = None, **kwargs) -> int:
+        """
+        Run doit as if called from the command line.
+
+        Args:
+            args: Command line arguments.
+            **kwargs: Keyword arguments passed to :meth:`doit_main`.
+
+        Returns:
+            status: Status code of the run (see :meth:`doit.doit_cmd.DoitMain.run` for details).
+        """
+        return self.doit_main(**kwargs).run(args or [])

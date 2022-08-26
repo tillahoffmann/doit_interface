@@ -10,10 +10,7 @@ def test_reporter_traceback(manager: di.Manager, with_meta: bool):
     task = manager(basename="false", actions=["false"])
     if not with_meta:
         task.pop("meta")
-    doit_main = manager.doit_main
-    doit_main.task_loader.namespace["DOIT_CONFIG"] = {
-        "reporter": di.DoitInterfaceReporter,
-    }
+    doit_main = manager.doit_main(DOIT_CONFIG={"reporter": di.DoitInterfaceReporter})
     with mock.patch("sys.stdout.write") as write:
         assert doit_main.run(["false"])
     if with_meta:
@@ -27,10 +24,7 @@ def test_reporter_labels(manager: di.Manager):
     manager(basename="failed", actions=["false"])
     manager(basename="uptodate", actions=["touch file.txt"], targets=["file.txt"], uptodate=[True])
 
-    doit_main = manager.doit_main
-    doit_main.task_loader.namespace["DOIT_CONFIG"] = {
-        "reporter": di.DoitInterfaceReporter,
-    }
+    doit_main = manager.doit_main(DOIT_CONFIG={"reporter": di.DoitInterfaceReporter})
 
     with mock.patch("sys.stdout.write") as write:
         assert not doit_main.run(["success"])

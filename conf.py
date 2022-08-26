@@ -18,11 +18,23 @@ html_theme = "sphinx_rtd_theme"
 
 doctest_global_setup = """
 from doit_interface import *
+import os
+import tempfile
+
+# Use temporary working directory.
+_cwd = os.getcwd()
+tmpdir = tempfile.TemporaryDirectory()
+os.chdir(tmpdir.name)
+
 manager = Manager()
 manager.__enter__()
 """
 doctest_global_cleanup = """
 manager.__exit__()
+
+# Change back to original directory.
+os.chdir(_cwd)
+tmpdir.cleanup()
 """
 doctest_default_flags = doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS
 

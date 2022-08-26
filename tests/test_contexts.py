@@ -36,7 +36,7 @@ def test_group(manager: di.Manager):
     assert len(manager.tasks) == 3
     assert "with 2 tasks" in str(group)
 
-    assert not manager.doit_main.run([])
+    assert not manager.run()
     assert os.path.isfile("file1")
     assert os.path.isfile("file2")
 
@@ -47,7 +47,7 @@ def test_create_target_dirs(manager: di.Manager):
                        actions=["touch foo/bar"])
     assert len(task["actions"]) == 2
 
-    assert not manager.doit_main.run([])
+    assert not manager.run()
     assert os.path.isdir("foo")
     assert os.path.isfile("foo/bar")
 
@@ -56,7 +56,7 @@ def test_missing_target_dir(manager: di.Manager):
     manager(basename="basename", name="bar", targets=["foo/bar"], actions=["touch foo/bar"])
 
     with mock.patch("sys.stderr.write") as write:
-        assert manager.doit_main.run([]) == 1
+        assert manager.run() == 1
     assert "No such file or directory" in get_mocked_stdout(write)
     assert not os.path.isdir("foo")
 
@@ -71,7 +71,7 @@ def test_path_prefix(manager: di.Manager):
     # Manually create the directories.
     os.mkdir("inputs")
     os.mkdir("outputs")
-    assert not manager.doit_main.run(["outputs/output.txt"])
+    assert not manager.run(["outputs/output.txt"])
     with open("outputs/output.txt") as fp:
         assert fp.read().strip() == "hello"
 

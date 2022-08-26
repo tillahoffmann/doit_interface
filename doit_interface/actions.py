@@ -113,7 +113,7 @@ class SubprocessAction(BaseAction):
         if self.check_targets:
             for target in self.task.targets:
                 if not os.path.isfile(target):
-                    raise RuntimeError(f"target {target} was not created")
+                    return TaskFailed(f"target {target} was not created")
 
     @classmethod
     def set_global_env(cls, env):

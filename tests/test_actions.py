@@ -15,21 +15,21 @@ def test_subprocess_env(manager: di.Manager):
     try:
         os.environ["doit_interface_TEST_VAR"] = "VALUE"
         with mock.patch("subprocess.check_call") as check_call:
-            assert not manager.doit_main.run(["inherit_env"])
+            assert not manager.run(["inherit_env"])
             check_call.assert_called_once()
             _, kwargs = check_call.call_args
             assert kwargs["env"]["doit_interface_TEST_VAR"] == "VALUE"
             assert "OTHER_VAR" not in kwargs["env"]
             check_call.reset_mock()
 
-            assert not manager.doit_main.run(["update_env"])
+            assert not manager.run(["update_env"])
             check_call.assert_called_once()
             _, kwargs = check_call.call_args
             assert kwargs["env"]["doit_interface_TEST_VAR"] == "VALUE"
             assert kwargs["env"]["OTHER_VAR"] == "17"
             check_call.reset_mock()
 
-            assert not manager.doit_main.run(["replace_env"])
+            assert not manager.run(["replace_env"])
             check_call.assert_called_once()
             _, kwargs = check_call.call_args
             assert "doit_interface_TEST_VAR" not in kwargs["env"]
@@ -49,7 +49,7 @@ def test_subprocess_global_env(manager: di.Manager):
             di.SubprocessAction.get_global_env().update({
                 "doit_interface_OTHER_TEST_VAR": "SOMETHING_ELSE"})
 
-            assert not manager.doit_main.run(["task"])
+            assert not manager.run(["task"])
             check_call.assert_called_once()
             _, kwargs = check_call.call_args
             assert kwargs["env"]["doit_interface_TEST_VAR"] == "SOMETHING"
@@ -58,7 +58,7 @@ def test_subprocess_global_env(manager: di.Manager):
         finally:
             di.SubprocessAction.set_global_env({})
 
-        assert not manager.doit_main.run(["task"])
+        assert not manager.run(["task"])
         check_call.assert_called_once()
         _, kwargs = check_call.call_args
         assert "doit_interface_TEST_VAR" not in kwargs["env"]
@@ -91,17 +91,17 @@ def test_subprocess_substitutions(manager: di.Manager, shell: bool):
         manager(basename=basename, actions=[di.SubprocessAction(_maybe_join(args))], **kwargs)
 
     for task in ["no_target", "no_multiple_deps"]:
-        assert manager.doit_main.run([task]) == 3
+        assert manager.run([task]) == 3
 
     with mock.patch("subprocess.check_call") as check_call, \
             mock.patch("os.path.isfile", return_value=True) as isfile:
-        assert not manager.doit_main.run(["interpreter"])
+        assert not manager.run(["interpreter"])
         check_call.assert_called_once()
         (args, *_), _ = check_call.call_args
         assert args == _maybe_join([sys.executable])
         check_call.reset_mock()
 
-        assert not manager.doit_main.run(["target"])
+        assert not manager.run(["target"])
         check_call.assert_called_once()
         (args, *_), _ = check_call.call_args
         assert args == _maybe_join(["target1"])
@@ -110,19 +110,19 @@ def test_subprocess_substitutions(manager: di.Manager, shell: bool):
         isfile.reset_mock()
 
         with mock.patch("sys.stderr.write") as write:
-            assert manager.doit_main.run(["single_dep"]) == 3
+            assert manager.run(["single_dep"]) == 3
         assert "first dependency substitution is not supported" in get_mocked_stdout(write)
         check_call.assert_not_called()
         check_call.reset_mock()
 
-        assert not manager.doit_main.run(["multiple_dep"])
+        assert not manager.run(["multiple_dep"])
         check_call.assert_called_once()
         (args, *_), _ = check_call.call_args
         # doit uses sets for file dependencies so the order is non-deterministic.
         assert set(args.split() if shell else args) == {"dep1", "dep2"}
         check_call.reset_mock()
 
-        assert not manager.doit_main.run(["name_sub"])
+        assert not manager.run(["name_sub"])
         check_call.assert_called_once()
         (args, *_), _ = check_call.call_args
         assert args == _maybe_join(["echo", "hello name_sub"])
@@ -132,13 +132,13 @@ def test_subprocess_substitutions(manager: di.Manager, shell: bool):
 def test_subprocess_invalid_args(manager: di.Manager):
     manager(basename="task", actions=[di.SubprocessAction(74)])
     with mock.patch("sys.stderr.write") as write:
-        assert manager.doit_main.run([]) == 3
+        assert manager.run() == 3
     assert "74 is not a valid command" in get_mocked_stdout(write)
 
 
 def test_subprocess_shell(manager: di.Manager):
     manager(basename="task", actions=[di.SubprocessAction("echo hello > world.txt")])
-    assert not manager.doit_main.run([])
+    assert not manager.run()
     with open("world.txt") as fp:
         assert fp.read().strip() == "hello"
 
@@ -151,7 +151,7 @@ def test_subprocess_use_as_default(manager: di.Manager):
 
 def test_subprocess_fail(manager: di.Manager):
     manager(basename="task", actions=[di.SubprocessAction("false")])
-    assert manager.doit_main.run([]) == 1
+    assert manager.run() == 1
 
 
 @pytest.mark.parametrize("create_target", [True, False])
@@ -160,5 +160,5 @@ def test_target_not_created(manager: di.Manager, check_targets: bool, create_tar
     action = di.SubprocessAction("touch target" if create_target else "true",
                                  check_targets=check_targets)
     manager(basename="task", actions=[action], targets=["target"])
-    expected = 3 if not create_target and check_targets else 0
-    assert manager.doit_main.run([]) == expected
+    expected = 1 if not create_target and check_targets else 0
+    assert manager.run() == expected
