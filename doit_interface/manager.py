@@ -106,11 +106,23 @@ class Manager:
         self.tasks.clear()
         self.context_stack.clear()
 
-    @property
-    def doit_main(self) -> DoitMain:
+    def doit_main(self, DOIT_CONFIG=None, **kwargs) -> DoitMain:
         """
         Doit interface object.
         """
         loader = NamespaceTaskLoader()
-        loader.namespace = {"manager": self}
+        loader.namespace = {"manager": self, "DOIT_CONFIG": DOIT_CONFIG or {}, **kwargs}
         return DoitMain(loader)
+
+    def run(self, args: list[str] = None, **kwargs) -> int:
+        """
+        Run doit as if called from the command line.
+
+        Args:
+            args: Command line arguments.
+            **kwargs: Keyword arguments passed to :meth:`doit_main`.
+
+        Returns:
+            status: Status code of the run (see :meth:`doit.doit_cmd.DoitMain.run` for details).
+        """
+        return self.doit_main(**kwargs).run(args or [])
