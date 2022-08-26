@@ -68,7 +68,7 @@ The :class:`DoitInterfaceReporter` provides more verbose progress reports and po
 Group tasks
 ^^^^^^^^^^^
 
-Group tasks to easily execute all of them using :class:`doit_interface.group_tasks`. Tasks can be added to groups using a context manager (as shown below) or by calling the group like a task manager to create a new task. Groups can be nested arbitrarily.
+Group tasks to easily execute all of them using :class:`doit_interface.group_tasks`. Tasks can be added to groups using a context manager (as shown below) or by calling the group to add an existing task. Groups can be nested arbitrarily.
 
 .. doctest:: group_tasks
 
