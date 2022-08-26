@@ -11,8 +11,7 @@ except FileNotFoundError:
 with open("README.rst") as fp:
     long_description = fp.read()
 substitutions = [
-    (r":class:", r":code:"),
-    (r":ref:", r":code:"),
+    (r":(attr|class|meth|ref):", r":code:"),
     (r".. doctest::.*", r".. code-block:: python"),
     (r".. automodule::", r".. code-block::\n\n"),
 ]
