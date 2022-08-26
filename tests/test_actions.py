@@ -160,5 +160,5 @@ def test_target_not_created(manager: di.Manager, check_targets: bool, create_tar
     action = di.SubprocessAction("touch target" if create_target else "true",
                                  check_targets=check_targets)
     manager(basename="task", actions=[action], targets=["target"])
-    expected = 3 if not create_target and check_targets else 0
+    expected = 1 if not create_target and check_targets else 0
     assert manager.run() == expected
