@@ -3,7 +3,7 @@ from doit.tools import create_folder
 import operator
 import os
 import pathlib
-import typing
+from typing import Callable, Iterable
 from . import manager as manager_
 from .util import normalize_task_name, NoTasksError
 
@@ -118,7 +118,7 @@ class prefix(_BaseContext):
         op: Operation used to join prefixes (defaults to addition).
         **kwargs: Keyword arguments of different prefixes.
     """
-    def __init__(self, *, manager: "manager_.Manager" = None, op: typing.Callable = None,
+    def __init__(self, *, manager: "manager_.Manager" = None, op: Callable = None,
                  **kwargs) -> None:
         super().__init__(manager=manager)
         self.kwargs = kwargs
@@ -130,7 +130,7 @@ class prefix(_BaseContext):
                 continue
             if isinstance(value, str):
                 value = self.op(prefix, value)
-            elif isinstance(value, typing.Iterable):
+            elif isinstance(value, Iterable):
                 value = [self.op(prefix, x) for x in value]
             task[key] = value
         return task

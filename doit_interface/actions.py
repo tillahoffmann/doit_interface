@@ -4,7 +4,7 @@ from doit.task import Task
 import os
 import subprocess
 import sys
-import typing
+from typing import Iterable, Union
 from .contexts import _BaseContext
 
 
@@ -45,8 +45,8 @@ class SubprocessAction(BaseAction):
     """
     _GLOBAL_ENV = {}
 
-    def __init__(self, args: typing.Union[str, typing.Iterable[str]], task: Task = None,
-                 env: dict = None, inherit_env: bool = True, check_targets: bool = True, **kwargs):
+    def __init__(self, args: Union[str, Iterable[str]], task: Task = None, env: dict = None,
+                 inherit_env: bool = True, check_targets: bool = True, **kwargs):
         self.args = args
         self.task = task
         self.env = env or {}
@@ -90,7 +90,7 @@ class SubprocessAction(BaseAction):
                 if not self.task.file_dep:
                     raise ValueError(f"task {self.task} does not have any file dependencies")
                 args = args.replace("$^", " ".join(self.task.file_dep))
-        elif isinstance(self.args, typing.Iterable):
+        elif isinstance(self.args, Iterable):
             kwargs.setdefault("shell", False)
             args = []
             for arg in map(str, self.args):

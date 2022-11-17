@@ -1,7 +1,7 @@
-import typing
+from typing import Union
 
 
-def normalize_task_name(task: typing.Union[dict, str]) -> str:
+def normalize_task_name(task: Union[dict, str]) -> str:
     """
     Get the fully qualified task name.
 
