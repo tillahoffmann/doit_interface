@@ -8,7 +8,7 @@
 .. image:: https://readthedocs.org/projects/doit-interface/badge/?version=latest
    :target: https://doit-interface.readthedocs.io/en/latest/?badge=latest
 
-This package provides a functional interface for reducing boilerplate in :code:`dodo.py` of the `pydoit <https://pydoit.org>`__ build system. In short, all tasks are created and managed using a :class:`doit_interface.Manager`. Most :ref:`features<features>` are exposed using python context manager, e.g., grouping tasks.
+This package provides a functional interface for reducing boilerplate in :code:`dodo.py` of the `pydoit <https://pydoit.org>`__ build system. In short, all tasks are created and managed using a :class:`.Manager`. Most :ref:`features<features>` are exposed using python context manager, e.g., grouping tasks.
 
 Basic usage
 -----------
@@ -33,13 +33,15 @@ Basic usage
 
 .. note::
 
-  The default manager obtained by calling :meth:`doit_interface.Manager.get_instance` has a number of default contexts enabled:
+  The default manager obtained by calling :meth:`.Manager.get_instance` has a number of default contexts enabled:
 
-  1. :class:`doit_interface.SubprocessAction.use_as_default` to use :class:`doit_interface.SubprocessAction` by default for string actions.
-  2. :class:`contexts.create_target_dirs` to create target directories if they are missing.
-  3. :class:`contexts.normalize_dependencies` such that task objects can be used as file and task dependencies.
+  1. :class:`.SubprocessAction.use_as_default` to use :class:`.SubprocessAction` by default for string actions.
+  2. :class:`.create_target_dirs` to create target directories if they are missing.
+  3. :class:`.normalize_dependencies` such that task objects can be used as file and task dependencies.
 
-  If you want to override this default behavior, you can create a dedicated manager and call :meth:`doit_interface.Manager.set_default_instance` or modify the :attr:`doit_interface.Manager.context_stack` of the default manager.
+  It also injects a default :code:`DOIT_CONFIG` configuration variable if the filename is :code:`dodo.py`.
+
+  If you want to override this default behavior, you can create a dedicated manager and call :meth:`.Manager.set_default_instance` or modify the :attr:`.Manager.context_stack` of the default manager.
 
 
 .. _features:
@@ -50,7 +52,7 @@ Features
 Traceback for failed tasks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The :class:`DoitInterfaceReporter` provides more verbose progress reports and points you to the location where a failing task was defined.
+The :class:`.DoitInterfaceReporter` provides more verbose progress reports and points you to the location where a failing task was defined. The :code:`DOIT_CONFIG` is used by default if you use :meth:`.Manager.get_instance` to get a :class:`.Manager`.
 
 .. doctest:: reporter
 
@@ -68,7 +70,7 @@ The :class:`DoitInterfaceReporter` provides more verbose progress reports and po
 Group tasks
 ^^^^^^^^^^^
 
-Group tasks to easily execute all of them using :class:`doit_interface.group_tasks`. Tasks can be added to groups using a context manager (as shown below) or by calling the group to add an existing task. Groups can be nested arbitrarily.
+Group tasks to easily execute all of them using :class:`.group_tasks`. Tasks can be added to groups using a context manager (as shown below) or by calling the group to add an existing task. Groups can be nested arbitrarily.
 
 .. doctest:: group_tasks
 
@@ -81,7 +83,7 @@ Group tasks to easily execute all of them using :class:`doit_interface.group_tas
 Automatically create target directories
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Use :class:`doit_interface.create_target_dirs` to automatically create directories for each of your targets. This can be particularly useful if you generate nested data structures, e.g., for machine learning results based on different architectures, seeds, optimizers, learning rates, etc.
+Use :class:`.create_target_dirs` to automatically create directories for each of your targets. This can be particularly useful if you generate nested data structures, e.g., for machine learning results based on different architectures, seeds, optimizers, learning rates, etc.
 
 .. doctest:: create_target_dirs
 
@@ -93,7 +95,7 @@ Use :class:`doit_interface.create_target_dirs` to automatically create directori
 Share default values across tasks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Use :class:`doit_interface.defaults` to share default values across tasks, such as :code:`file_dep`.
+Use :class:`.defaults` to share default values across tasks, such as :code:`file_dep`.
 
 .. doctest:: defaults
 
@@ -108,7 +110,7 @@ Use :class:`doit_interface.defaults` to share default values across tasks, such 
 Use tasks as :code:`file_dep` or :code:`task_dep`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-:class:`doit_interface.normalize_dependencies` normalizes file and task dependencies such that task objects can be used as dependencies (in addition file and task names).
+:class:`.normalize_dependencies` normalizes file and task dependencies such that task objects can be used as dependencies (in addition file and task names).
 
 .. doctest:: normalize_dependencies
 
@@ -124,7 +126,7 @@ Use tasks as :code:`file_dep` or :code:`task_dep`
 Add prefixes to paths or other attributes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Path prefixes can be added using the :class:`path_prefix` context if file dependencies or targets share common directories. General prefixes are also available using :class:`prefix`.
+Path prefixes can be added using the :class:`.path_prefix` context if file dependencies or targets share common directories. General prefixes are also available using :class:`.prefix`.
 
 .. doctest:: path_prefix
 
@@ -135,7 +137,7 @@ Path prefixes can be added using the :class:`path_prefix` context if file depend
 Subprocess action
 ^^^^^^^^^^^^^^^^^
 
-The :class:`doit_interface.SubprocessAction` lets you spawn subprocesses akin to :class:`doit.action.CmdAction` yet with a few small differences. First, it does not capture output of the subprocess which is helpful for development but may add too much noise for deployment. Second, it supports `Makefile <https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html>`__ style variable substitutions and f-string substitutions for any attribute of the parent task. Third, it allows for global environment variables to be set that are shared across all, e.g., to limit the number of `OpenMP <https://www.openmp.org>`__ threads. You can use it by default for string-actions using the :class:`doit_interface.SubprocessAction.use_as_default` context.
+The :class:`.SubprocessAction` lets you spawn subprocesses akin to :code:`doit.action.CmdAction` yet with a few small differences. First, it does not capture output of the subprocess which is helpful for development but may add too much noise for deployment. Second, it supports `Makefile <https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html>`__ style variable substitutions and f-string substitutions for any attribute of the parent task. Third, it allows for global environment variables to be set that are shared across all, e.g., to limit the number of `OpenMP <https://www.openmp.org>`__ threads. You can use it by default for string-actions using the :class:`.SubprocessAction.use_as_default` context.
 
 Interface
 ---------

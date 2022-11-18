@@ -142,7 +142,7 @@ class Manager:
             **kwargs: Keyword arguments passed to :meth:`doit_main`.
 
         Returns:
-            status: Status code of the run (see :meth:`doit.doit_cmd.DoitMain.run` for details).
+            status: Status code of the run (see :code:`doit.doit_cmd.DoitMain.run` for details).
         """
         return self.doit_main(**kwargs).run(args or [])
 
