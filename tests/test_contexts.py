@@ -76,6 +76,16 @@ def test_path_prefix(manager: di.Manager):
         assert fp.read().strip() == "hello"
 
 
+@pytest.mark.parametrize("which", ["targets", "file_dep"])
+def test_path_prefix_one_of(manager: di.Manager, which: str):
+    with di.path_prefix(**{which: "some/prefix"}):
+        task = manager(basename="something", targets=["targets1", "targets2"],
+                       file_dep=["file_dep1", "file_dep2"])
+    other = "file_dep" if which == "targets" else "targets"
+    assert all(x.startswith(f"some/prefix/{which}") for x in task[which])
+    assert not any(x.startswith(f"some/prefix/{which}") for x in task[other])
+
+
 def test_path_prefix_missing(manager: di.Manager):
     with pytest.raises(ValueError):
         di.path_prefix()
