@@ -3,6 +3,7 @@ from doit.cmd_base import NamespaceTaskLoader
 from doit.doit_cmd import DoitMain
 import inspect
 from . import contexts
+from .config import DOIT_CONFIG as _DEFAULT_DOIT_CONFIG
 from .util import NoTasksError
 
 
@@ -96,6 +97,7 @@ class Manager:
                 contexts.create_target_dirs(),
                 contexts.normalize_dependencies(),
             ])
+        cls.__maybe_inject_doit_config()
         return cls._DEFAULT_MANAGER
 
     @classmethod
@@ -140,6 +142,20 @@ class Manager:
             **kwargs: Keyword arguments passed to :meth:`doit_main`.
 
         Returns:
-            status: Status code of the run (see :meth:`doit.doit_cmd.DoitMain.run` for details).
+            status: Status code of the run (see :code:`doit.doit_cmd.DoitMain.run` for details).
         """
         return self.doit_main(**kwargs).run(args or [])
+
+    @staticmethod
+    def __maybe_inject_doit_config() -> None:  # pragma: no cover
+        """
+        This function injects a `DOIT_CONFIG` variable into the callling module's scope if the
+        filename is `dodo.py` and a `DOIT_CONFIG` variable does not yet exist.
+        """
+        # Walk up the call stack until we find a file named `dodo.py` or the stack ends.
+        frame = inspect.currentframe()
+        while frame := frame.f_back:
+            if frame.f_code.co_filename.endswith("dodo.py"):
+                frame.f_globals.setdefault("DOIT_CONFIG", _DEFAULT_DOIT_CONFIG)
+                return
+        # We didn't find the dodo file. Maybe we just imported the module from somewhere else.

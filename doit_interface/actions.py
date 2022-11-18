@@ -23,7 +23,7 @@ class SubprocessAction(BaseAction):
     details).
 
     Python format string substitution is also supported with keys matching the valid attributes of
-    :class:`doit.task.Task`.
+    :code:`doit.task.Task`.
 
     Args:
         args: Sequence of program arguments or shell command.

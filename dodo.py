@@ -1,7 +1,6 @@
 import doit_interface as di
 
 
-DOIT_CONFIG = di.DOIT_CONFIG
 manager = di.Manager.get_instance()
 
 with di.group_tasks("build"):
@@ -10,7 +9,7 @@ with di.group_tasks("build"):
     manager(basename="lint", actions=["flake8"])
 
     with di.defaults(basename="docs"):
-        manager(name="html", actions=["sphinx-build . docs/_build"])
+        manager(name="html", actions=["sphinx-build -n . docs/_build"])
         manager(name="tests", actions=["sphinx-build -b doctest . docs/_build"])
 
     manager(basename="version", file_dep=["version.py"], targets=["VERSION"],
