@@ -158,8 +158,12 @@ class path_prefix(prefix):
         if prefix and any([targets, file_dep]):
             raise ValueError("use either `prefix` or a combination of `targets` and `file_dep`, "
                              "but not both")
-        super().__init__(manager=manager, file_dep=file_dep or prefix,
-                         targets=targets or prefix, op=os.path.join)
+        kwargs = {}
+        if file_dep := file_dep or prefix:
+            kwargs["file_dep"] = file_dep
+        if targets := targets or prefix:
+            kwargs["targets"] = targets
+        super().__init__(manager=manager, op=os.path.join, **kwargs)
 
 
 class group_tasks(dict, _BaseContext):
