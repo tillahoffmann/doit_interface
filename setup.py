@@ -1,12 +1,7 @@
 import re
 from setuptools import find_packages, setup
+from version_wizard import from_github_tag
 
-
-try:
-    with open("VERSION") as fp:
-        VERSION = fp.read().strip()
-except FileNotFoundError:
-    VERSION = "dev"
 
 with open("README.rst") as fp:
     long_description = fp.read()
@@ -22,7 +17,7 @@ setup(
     name="doit_interface",
     description="A functional interface for creating doit tasks",
     packages=find_packages(),
-    version=VERSION,
+    version=from_github_tag(),
     install_requires=[
         "colorama",
         "doit",
