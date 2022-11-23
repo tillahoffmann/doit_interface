@@ -23,7 +23,7 @@ bleach==5.0.1
     #   -r test_requirements.txt
     #   readme-renderer
 build==0.9.0
-    # via -r requirements.in
+    # via -r test_requirements.txt
 certifi==2022.6.15
     # via
     #   -r test_requirements.txt
@@ -100,7 +100,9 @@ packaging==21.3
     #   pytest
     #   sphinx
 pep517==0.13.0
-    # via build
+    # via
+    #   -r test_requirements.txt
+    #   build
 pkginfo==1.8.3
     # via
     #   -r test_requirements.txt

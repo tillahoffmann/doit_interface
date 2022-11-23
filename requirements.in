@@ -1,4 +1,3 @@
 # Include all requirements that are also used in CI.
 -r test_requirements.txt
-build
 version_wizard
